@@ -1,0 +1,51 @@
+# Decap CMS configuration
+# Docs: https://decapcms.org/docs/
+
+backend:
+  name: git-gateway
+  branch: main
+
+# Where uploaded images are stored in the repo
+media_folder: "public/uploads"
+# Public URL path for those images
+public_folder: "/uploads"
+
+collections:
+  - name: "blog"
+    label: "Blog Posts"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+
+      - label: "Publish Date"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "MMMM D, YYYY"
+        time_format: false
+        default: ""
+
+      - label: "Excerpt"
+        name: "excerpt"
+        widget: "text"
+        hint: "A short summary shown on the blog index page (1-2 sentences)."
+
+      - label: "Cover Image"
+        name: "cover_image"
+        widget: "image"
+        required: false
+        hint: "Optional header image for the post."
+
+      - label: "Author"
+        name: "author"
+        widget: "string"
+        default: "Chagrin Electronic Recycling"
+        required: false
+
+      - label: "Body"
+        name: "body"
+        widget: "markdown"

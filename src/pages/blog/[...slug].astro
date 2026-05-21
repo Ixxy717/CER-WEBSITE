@@ -1,0 +1,81 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props:  { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<BaseLayout title={post.data.title} description={post.data.excerpt}>
+
+  <!-- Post hero -->
+  <section class="bg-charcoal text-white">
+    {post.data.cover_image ? (
+      <div class="relative overflow-hidden max-h-96">
+        <img
+          src={post.data.cover_image}
+          alt={post.data.title}
+          class="w-full h-72 md:h-96 object-cover object-center"
+        />
+        <div class="absolute inset-0 bg-charcoal/60"></div>
+        <div class="absolute bottom-0 left-0 right-0 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-4">
+          <p class="text-white/50 text-sm mb-2">{formatDate(post.data.date)}</p>
+          <h1 class="text-3xl sm:text-4xl font-bold leading-tight">{post.data.title}</h1>
+        </div>
+      </div>
+    ) : (
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <p class="text-white/50 text-sm mb-3">{formatDate(post.data.date)}</p>
+        <h1 class="text-3xl sm:text-4xl font-bold leading-tight">{post.data.title}</h1>
+      </div>
+    )}
+  </section>
+
+  <!-- Post body -->
+  <section class="bg-section-white py-12 md:py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Excerpt / lead -->
+      <p class="text-lg text-charcoal/70 leading-relaxed mb-8 pb-8 border-b border-black/8 font-medium">
+        {post.data.excerpt}
+      </p>
+
+      <!-- Rendered markdown -->
+      <div class="prose prose-charcoal max-w-none
+        prose-headings:font-bold prose-headings:text-charcoal
+        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+        prose-p:text-charcoal/75 prose-p:leading-relaxed prose-p:mb-4
+        prose-a:text-brand-green prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-charcoal prose-strong:font-semibold
+        prose-ul:text-charcoal/75 prose-li:mb-1
+        prose-img:rounded-xl prose-img:shadow-sm">
+        <Content />
+      </div>
+
+      <!-- Back link -->
+      <div class="mt-12 pt-8 border-t border-black/8">
+        <a href="/blog" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-green hover:underline">
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          Back to all posts
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+</BaseLayout>

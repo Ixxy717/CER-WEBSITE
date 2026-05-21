@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables — never commit
+.env
+.env.local
+.env.*.local
+
+# Astro
+.astro/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local Netlify folder
+.netlify

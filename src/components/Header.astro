@@ -1,0 +1,129 @@
+---
+import { navLinks } from '../data/nav';
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href.startsWith('http')) return false;
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="bg-charcoal border-b border-white/10 sticky top-0 z-50">
+  <div class="px-6 sm:px-10 lg:px-16 flex items-center justify-between h-16 xs:h-18 md:h-20 lg:h-24">
+
+    <!-- Logo -->
+    <a href="/" aria-label="Chagrin Electronic Recycling — home" class="shrink-0">
+      <img
+        src="/assets/logo/CER-LOGO-GREEN.png"
+        alt="Chagrin Electronic Recycling"
+        class="h-10 xs:h-12 md:h-14 lg:h-[68px] w-auto"
+      />
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Main navigation">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+          class={[
+            'text-sm lg:text-base font-medium tracking-wide whitespace-nowrap transition-colors',
+            isActive(link.href)
+              ? 'text-brand-green'
+              : 'text-off-white hover:text-brand-green',
+          ].join(' ')}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="menu-toggle"
+      class="md:hidden w-10 h-10 rounded flex items-center justify-center text-gray-300 hover:text-brand-green hover:bg-gray-800 transition-colors"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Toggle navigation menu"
+    >
+      <!-- Hamburger icon -->
+      <svg id="icon-hamburger" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+      <!-- Close icon (hidden by default) -->
+      <svg id="icon-close" class="w-6 h-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+  </div>
+
+  <!-- Mobile menu dropdown -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden bg-charcoal border-t border-white/10"
+    aria-label="Mobile navigation"
+  >
+    <nav class="px-6 sm:px-10">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+          class={[
+            'flex items-center justify-between py-4 text-base font-medium border-b border-white/[0.08] last:border-b-0 transition-colors',
+            isActive(link.href)
+              ? 'text-brand-green'
+              : 'text-off-white hover:text-brand-green',
+          ].join(' ')}
+        >
+          {link.label}
+          {isActive(link.href) && (
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-green shrink-0" aria-hidden="true" />
+          )}
+        </a>
+      ))}
+    </nav>
+    <!-- Bottom padding buffer -->
+    <div class="h-3"></div>
+  </div>
+</header>
+
+<script>
+  const toggle      = document.getElementById('menu-toggle')!;
+  const menu        = document.getElementById('mobile-menu')!;
+  const iconHamburg = document.getElementById('icon-hamburger')!;
+  const iconClose   = document.getElementById('icon-close')!;
+
+  function openMenu() {
+    menu.classList.remove('hidden');
+    toggle.setAttribute('aria-expanded', 'true');
+    iconHamburg.classList.add('hidden');
+    iconClose.classList.remove('hidden');
+  }
+
+  function closeMenu() {
+    menu.classList.add('hidden');
+    toggle.setAttribute('aria-expanded', 'false');
+    iconHamburg.classList.remove('hidden');
+    iconClose.classList.add('hidden');
+  }
+
+  toggle.addEventListener('click', () => {
+    menu.classList.contains('hidden') ? openMenu() : closeMenu();
+  });
+
+  // Close when a link is tapped
+  menu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // Close when viewport reaches desktop width
+  const mq = window.matchMedia('(min-width: 768px)');
+  mq.addEventListener('change', e => { if (e.matches) closeMenu(); });
+</script>

@@ -1,0 +1,134 @@
+---
+// ContactForm.astro — powered by Netlify Forms
+//
+// No third-party account needed. Netlify detects the `data-netlify="true"` attribute
+// at build time and handles form submissions automatically.
+//
+// To configure email notifications after deploying:
+//   1. Go to Netlify dashboard → Your site → Forms
+//   2. Click on the "contact" form
+//   3. Go to Form notifications → Add notification → Email notification
+//   4. Set the recipient to: Chagrin-E-Recycling@scarce-resources.com
+---
+
+<form
+  id="contact-form"
+  name="contact"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  class="flex flex-col gap-5"
+  novalidate
+>
+  <!-- Required hidden input so Netlify knows which form this is -->
+  <input type="hidden" name="form-name" value="contact" />
+  <!-- Honeypot spam prevention (hidden from real users) -->
+  <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div class="flex flex-col gap-1.5">
+      <label for="name" class="text-sm font-medium text-charcoal">Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        required
+        autocomplete="name"
+        placeholder="Your name"
+        class="px-4 py-2.5 rounded-lg border border-black/15 text-charcoal text-sm placeholder:text-charcoal/35 focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition"
+      />
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label for="email" class="text-sm font-medium text-charcoal">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder="you@example.com"
+        class="px-4 py-2.5 rounded-lg border border-black/15 text-charcoal text-sm placeholder:text-charcoal/35 focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    <label for="subject" class="text-sm font-medium text-charcoal">
+      Subject <span class="text-charcoal/40 font-normal">(optional)</span>
+    </label>
+    <input
+      id="subject"
+      name="subject"
+      type="text"
+      placeholder="e.g. Schedule a pickup, TV recycling question…"
+      class="px-4 py-2.5 rounded-lg border border-black/15 text-charcoal text-sm placeholder:text-charcoal/35 focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition"
+    />
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    <label for="message" class="text-sm font-medium text-charcoal">Message</label>
+    <textarea
+      id="message"
+      name="message"
+      rows="5"
+      required
+      placeholder="How can we help?"
+      class="px-4 py-2.5 rounded-lg border border-black/15 text-charcoal text-sm placeholder:text-charcoal/35 focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition resize-none"
+    ></textarea>
+  </div>
+
+  <div>
+    <button
+      type="submit"
+      id="submit-btn"
+      class="bg-brand-green text-charcoal font-semibold text-sm px-6 py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      Send Message
+    </button>
+  </div>
+
+  <!-- Success message (shown after JS submit) -->
+  <div id="form-success" class="hidden p-4 bg-brand-green/10 border border-brand-green/30 rounded-lg">
+    <p class="text-sm font-medium text-charcoal">Message sent — thanks! We'll get back to you shortly.</p>
+  </div>
+
+  <!-- Error message -->
+  <div id="form-error" class="hidden p-4 bg-red-50 border border-red-200 rounded-lg">
+    <p class="text-sm text-red-700">Something went wrong. Please try again or call us directly.</p>
+  </div>
+</form>
+
+<script>
+  const form      = document.getElementById('contact-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const successEl = document.getElementById('form-success')!;
+  const errorEl   = document.getElementById('form-error')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    successEl.classList.add('hidden');
+    errorEl.classList.add('hidden');
+
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form) as any).toString(),
+      });
+
+      if (res.ok) {
+        form.reset();
+        successEl.classList.remove('hidden');
+      } else {
+        throw new Error('Non-OK response');
+      }
+    } catch {
+      errorEl.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  });
+</script>

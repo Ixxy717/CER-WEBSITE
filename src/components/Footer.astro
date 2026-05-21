@@ -1,0 +1,84 @@
+---
+const navLinks = [
+  { label: 'Home',         href: '/',                            external: false },
+  { label: 'Residential',  href: '/residential',                 external: false },
+  { label: 'TV Recycling', href: '/tv-recycling',                external: false },
+  { label: 'Blog',         href: '/blog',                        external: false },
+  { label: 'Corporate',    href: 'https://scarce-resources.com', external: true  },
+  { label: 'About',        href: '/about',                       external: false },
+  { label: 'Contact',      href: '/contact',                     external: false },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-charcoal text-white/70 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <!-- Brand column -->
+      <div class="flex flex-col gap-4">
+        <a href="/" aria-label="Chagrin Electronic Recycling — home">
+          <img
+            src="/assets/logo/CER-LOGO-GREEN.png"
+            alt="Chagrin Electronic Recycling"
+            class="h-10 w-auto"
+          />
+        </a>
+        <p class="text-sm leading-relaxed text-white/60">
+          Community electronics recycling in Chagrin Falls, Ohio.
+          Keeping e-waste out of landfills, one drop-off at a time.
+        </p>
+      </div>
+
+      <!-- Contact column -->
+      <div class="flex flex-col gap-3">
+        <h3 class="text-white text-sm font-semibold uppercase tracking-wider mb-1">Contact</h3>
+        <address class="not-italic flex flex-col gap-2 text-sm">
+          <span>10140 Gottschalk Pkwy<br />Chagrin Falls, OH 44022</span>
+          <a href="tel:+14406019166" class="hover:text-brand-green transition-colors">(440) 601-9166</a>
+          <a href="tel:+14406014153" class="hover:text-brand-green transition-colors">(440) 601-4153</a>
+          <a href="mailto:Chagrin-E-Recycling@scarce-resources.com" class="hover:text-brand-green transition-colors break-all">
+            Chagrin-E-Recycling@scarce-resources.com
+          </a>
+        </address>
+      </div>
+
+      <!-- Nav column -->
+      <div class="flex flex-col gap-3">
+        <h3 class="text-white text-sm font-semibold uppercase tracking-wider mb-1">Quick Links</h3>
+        <nav aria-label="Footer navigation" class="flex flex-col gap-2">
+          {navLinks.map(link => (
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              class="text-sm hover:text-brand-green transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+    </div>
+
+    <!-- Sister company note -->
+    <div class="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-white/40">
+      <p>
+        For bulk or business electronics, visit our sister company&nbsp;
+        <a
+          href="https://scarce-resources.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-brand-green hover:underline"
+        >
+          Scarce Resources Company Inc.
+        </a>
+      </p>
+      <p>&copy; {year} Chagrin Electronic Recycling. All rights reserved.</p>
+    </div>
+
+  </div>
+</footer>

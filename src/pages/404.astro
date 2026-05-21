@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The page you're looking for doesn't exist. Return to Chagrin Electronic Recycling."
+>
+  <section class="bg-charcoal text-white flex-1 flex items-center">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 w-full">
+      <div class="max-w-xl">
+
+        <div class="flex items-center gap-3 mb-6">
+          <span class="text-brand-green font-bold text-6xl leading-none">404</span>
+          <div class="w-px h-12 bg-white/20"></div>
+          <span class="text-white/50 text-sm leading-snug">Page<br />not found</span>
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl font-bold mb-4 leading-snug">
+          That page doesn't exist.
+        </h1>
+        <p class="text-white/60 leading-relaxed mb-8">
+          You may have followed a broken link or typed the address incorrectly.
+          Head back to the homepage or use the links below.
+        </p>
+
+        <div class="flex flex-wrap gap-3 mb-10">
+          <a
+            href="/"
+            class="inline-block bg-brand-green text-charcoal font-semibold px-5 py-2.5 rounded-lg text-sm hover:brightness-110 transition-all"
+          >
+            Go to Homepage
+          </a>
+          <a
+            href="/contact"
+            class="inline-block bg-white/10 text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-white/20 transition-all border border-white/20"
+          >
+            Contact Us
+          </a>
+        </div>
+
+        <div class="border-t border-white/10 pt-8 grid grid-cols-1 xs:grid-cols-2 gap-3">
+          <a href="/residential" class="text-sm text-white/50 hover:text-brand-green transition-colors">→ Residential Drop-Off</a>
+          <a href="/tv-recycling" class="text-sm text-white/50 hover:text-brand-green transition-colors">→ TV Recycling</a>
+          <a href="/about" class="text-sm text-white/50 hover:text-brand-green transition-colors">→ About Us</a>
+          <a href="/contact" class="text-sm text-white/50 hover:text-brand-green transition-colors">→ Contact</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</BaseLayout>

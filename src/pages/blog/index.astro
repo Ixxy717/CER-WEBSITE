@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<BaseLayout
+  title="Blog"
+  description="News, tips, and updates from Chagrin Electronic Recycling in Chagrin Falls, OH."
+>
+
+  <PageHero
+    title="Blog"
+    subtitle="News and updates from Chagrin Electronic Recycling."
+  />
+
+  <section class="bg-section-light py-14 md:py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      {posts.length === 0 ? (
+        <p class="text-charcoal/50 text-center py-12">No posts yet — check back soon.</p>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map(post => (
+            <a
+              href={`/blog/${post.slug}`}
+              class="group bg-card rounded-xl border border-black/5 shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col"
+            >
+              {post.data.cover_image && (
+                <div class="aspect-[16/9] overflow-hidden bg-section-light">
+                  <img
+                    src={post.data.cover_image}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
+              <div class="p-6 flex flex-col gap-3 flex-1">
+                <p class="text-xs text-charcoal/45 font-medium">{formatDate(post.data.date)}</p>
+                <h2 class="font-bold text-charcoal text-lg leading-snug group-hover:text-brand-green transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="text-charcoal/65 text-sm leading-relaxed flex-1">
+                  {post.data.excerpt}
+                </p>
+                <span class="text-brand-green text-sm font-semibold mt-1">
+                  Read more →
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+
+    </div>
+  </section>
+
+</BaseLayout>

@@ -1,0 +1,220 @@
+---
+// TVCalculator.astro — Stripe Payment Element integration
+//
+// Stripe publishable key is set below (sandbox — swap for pk_live_... before going to production).
+// Secret key goes in .env as STRIPE_SECRET_KEY (handled by netlify/functions/create-payment-intent.js).
+---
+
+<script src="https://js.stripe.com/v3/" is:inline></script>
+
+<div id="tv-calculator" class="bg-card rounded-xl border border-black/5 shadow-sm p-6 md:p-8 max-w-lg">
+
+  <!-- Step 1: size picker -->
+  <div id="calc-step">
+    <h2 class="text-xl font-bold text-charcoal mb-1">Select Your TV Size</h2>
+    <p class="text-charcoal/60 text-sm mb-5">Choose your TV's diagonal screen size. Fee is $1 per inch.</p>
+
+    <!-- Size grid -->
+    <div class="grid grid-cols-3 xs:grid-cols-4 gap-2 mb-6" id="size-grid">
+      {[24, 28, 32, 36, 43, 46, 48, 50, 55, 65, 70, 75, 80].map(size => (
+        <button
+          type="button"
+          data-inches={size}
+          class="size-btn flex flex-col items-center justify-center gap-0.5 rounded-lg border-2 border-black/10 bg-section-light hover:border-brand-green hover:bg-brand-green/5 transition-all py-3 px-2 text-center cursor-pointer"
+        >
+          <span class="text-base font-bold text-charcoal leading-none">{size}"</span>
+          <span class="text-xs text-charcoal/50">${size}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Selected fee preview -->
+    <div id="fee-display" class="hidden mb-5 p-4 bg-brand-green/10 border border-brand-green/25 rounded-lg flex items-center justify-between">
+      <div>
+        <p class="text-xs text-charcoal/60 mb-0.5">Selected</p>
+        <p class="font-semibold text-charcoal"><span id="fee-inches"></span>" TV</p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs text-charcoal/60 mb-0.5">Recycling fee</p>
+        <p class="text-2xl font-bold text-charcoal">$<span id="fee-amount"></span></p>
+      </div>
+    </div>
+
+    <button
+      id="proceed-btn"
+      disabled
+      class="w-full bg-brand-green text-charcoal font-semibold text-sm px-6 py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      Proceed to Payment
+    </button>
+  </div>
+
+  <!-- Step 2: Stripe Payment Element -->
+  <div id="payment-step" class="hidden">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-xl font-bold text-charcoal">Payment</h2>
+        <p class="text-sm text-charcoal/60 mt-0.5">
+          TV Recycling Fee — <span id="payment-summary"></span>
+        </p>
+      </div>
+      <button id="back-btn" class="text-sm text-charcoal/50 hover:text-brand-green transition-colors underline shrink-0">
+        ← Change size
+      </button>
+    </div>
+
+    <form id="payment-form">
+      <div id="payment-element" class="mb-5"></div>
+
+      <div id="stripe-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <p id="stripe-error-msg" class="text-sm text-red-700"></p>
+      </div>
+
+      <button
+        id="pay-btn"
+        type="submit"
+        class="w-full bg-brand-green text-charcoal font-semibold text-sm px-6 py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Pay <span id="pay-amount"></span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div id="payment-success" class="hidden text-center py-4">
+    <svg class="w-12 h-12 text-brand-green mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+    <p class="font-bold text-charcoal text-lg mb-2">Payment received — thank you!</p>
+    <p class="text-sm text-charcoal/65 leading-relaxed">
+      Check your email for a receipt from Stripe.
+      Bring it when you drop off your TV, or mention it when scheduling a pickup.
+    </p>
+  </div>
+
+  <!-- Loading -->
+  <div id="payment-loading" class="hidden mt-4 flex items-center gap-2 text-sm text-charcoal/60">
+    <svg class="animate-spin w-4 h-4 text-brand-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <span>Setting up payment…</span>
+  </div>
+
+</div>
+
+<script>
+  // Sandbox publishable key — swap for pk_live_... before going to production
+  const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TZImeChD1IB0vF1FoBuOcSzaTgOAzcL4QCXSZtBeQwsNFXiPvn4kdzRUSHWBl539ZvYKarcvFPZIE7Gs7cKHmbn007bqbnHZW';
+
+  const proceedBtn    = document.getElementById('proceed-btn') as HTMLButtonElement;
+  const calcStep      = document.getElementById('calc-step')!;
+  const paymentStep   = document.getElementById('payment-step')!;
+  const backBtn       = document.getElementById('back-btn')!;
+  const paymentForm   = document.getElementById('payment-form')!;
+  const payBtn        = document.getElementById('pay-btn') as HTMLButtonElement;
+  const payAmount     = document.getElementById('pay-amount')!;
+  const paymentSummary = document.getElementById('payment-summary')!;
+  const successEl     = document.getElementById('payment-success')!;
+  const loadingEl     = document.getElementById('payment-loading')!;
+  const stripeError   = document.getElementById('stripe-error')!;
+  const stripeErrorMsg = document.getElementById('stripe-error-msg')!;
+  const feeDisplay    = document.getElementById('fee-display')!;
+  const feeInches     = document.getElementById('fee-inches')!;
+  const feeAmount     = document.getElementById('fee-amount')!;
+
+  let currentInches = 0;
+  let stripeInstance: any = null;
+  let elementsInstance: any = null;
+
+  // Size button selection
+  document.querySelectorAll<HTMLButtonElement>('.size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Deselect all
+      document.querySelectorAll('.size-btn').forEach(b => {
+        b.classList.remove('border-brand-green', 'bg-brand-green/10');
+        b.classList.add('border-black/10', 'bg-section-light');
+      });
+      // Select this one
+      btn.classList.remove('border-black/10', 'bg-section-light');
+      btn.classList.add('border-brand-green', 'bg-brand-green/10');
+
+      currentInches = parseInt(btn.dataset.inches!);
+      feeInches.textContent = String(currentInches);
+      feeAmount.textContent = String(currentInches);
+      feeDisplay.classList.remove('hidden');
+      proceedBtn.disabled = false;
+    });
+  });
+
+  // Proceed to payment
+  proceedBtn.addEventListener('click', async () => {
+    if (!currentInches) return;
+    proceedBtn.disabled = true;
+    loadingEl.classList.remove('hidden');
+    stripeError.classList.add('hidden');
+
+    try {
+      const res = await fetch('/.netlify/functions/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inches: currentInches }),
+      });
+
+      if (!res.ok) throw new Error('Failed to create payment intent');
+      const { clientSecret } = await res.json();
+
+      stripeInstance = (window as any).Stripe(STRIPE_PUBLISHABLE_KEY);
+      elementsInstance = stripeInstance.elements({ clientSecret });
+      elementsInstance.create('payment').mount('#payment-element');
+
+      const fee = `$${currentInches}.00`;
+      paymentSummary.textContent = `${currentInches}" TV`;
+      payAmount.textContent = fee;
+
+      calcStep.classList.add('hidden');
+      loadingEl.classList.add('hidden');
+      paymentStep.classList.remove('hidden');
+    } catch (err) {
+      console.error(err);
+      loadingEl.classList.add('hidden');
+      proceedBtn.disabled = false;
+      stripeErrorMsg.textContent = 'Could not connect to payment service. Please try again or call us at (440) 601-9166.';
+      stripeError.classList.remove('hidden');
+    }
+  });
+
+  // Back
+  backBtn.addEventListener('click', () => {
+    paymentStep.classList.add('hidden');
+    calcStep.classList.remove('hidden');
+    stripeError.classList.add('hidden');
+    proceedBtn.disabled = false;
+  });
+
+  // Submit payment
+  paymentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!stripeInstance || !elementsInstance) return;
+
+    payBtn.disabled = true;
+    payBtn.textContent = 'Processing…';
+    stripeError.classList.add('hidden');
+
+    const { error } = await stripeInstance.confirmPayment({
+      elements: elementsInstance,
+      confirmParams: { return_url: window.location.href },
+      redirect: 'if_required',
+    });
+
+    if (error) {
+      stripeErrorMsg.textContent = error.message ?? 'Payment failed. Please try again.';
+      stripeError.classList.remove('hidden');
+      payBtn.disabled = false;
+      payBtn.textContent = `Pay $${currentInches}.00`;
+    } else {
+      paymentStep.classList.add('hidden');
+      successEl.classList.remove('hidden');
+    }
+  });
+</script>
