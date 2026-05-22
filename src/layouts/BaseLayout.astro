@@ -24,6 +24,7 @@ const siteName = 'Chagrin Electronic Recycling';
     <meta name="description" content={description} />
     <title>{title} | {siteName}</title>
     <link rel="icon" type="image/png" href="/assets/logo/cer-logo.png" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body class="flex flex-col min-h-screen bg-off-white text-charcoal">
     <Header />
@@ -31,5 +32,16 @@ const siteName = 'Chagrin Electronic Recycling';
       <slot />
     </main>
     <Footer />
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+    </script>
   </body>
 </html>
