@@ -1,8 +1,10 @@
 ---
-title: "The Importance of Certified E-Waste Recycling"
-date: 2026-04-06
-excerpt: "Electronic waste is growing rapidly as technology advances. Certified e-waste recycling offers a reliable way to handle electronic waste safely, efficiently, and responsibly."
-author: "Chagrin Electronic Recycling"
+title: The Importance of Certified E-Waste Recycling
+date: 2026-05-22
+excerpt: Electronic waste is growing rapidly as technology advances. Certified
+  e-waste recycling offers a reliable way to handle electronic waste safely,
+  efficiently, and responsibly.
+author: Chagrin Electronic Recycling
 ---
 
 Electronic waste is growing rapidly as technology advances and devices become obsolete faster. Managing this waste responsibly is crucial for protecting the environment and public health. Certified e-waste recycling offers a reliable way to handle electronic waste safely and efficiently.
