@@ -1,17 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import TVCalculator from '../components/TVCalculator.astro';
 ---
 
 <BaseLayout
   title="TV Recycling"
-  description="Recycle your TV in Chagrin Falls, OH. $1 per diagonal inch. Calculate your fee and pay online with PayPal before drop-off."
+  description="Recycle your TV in Chagrin Falls, OH. $1 per diagonal inch. Cash only at drop-off."
 >
 
   <PageHero
     title="TV Recycling"
-    subtitle="$1 per diagonal inch. Pay online, then drop off — or schedule a pickup."
+    subtitle="$1 per diagonal inch. Cash only — pay when you drop off."
   />
 
   <!-- ── Why TVs cost money ──────────────────────────────── -->
@@ -39,100 +38,72 @@ import TVCalculator from '../components/TVCalculator.astro';
               A 40-inch TV is $40. A 55-inch TV is $55. No hidden charges, no surprises.
             </p>
           </div>
-        </div>
 
-        <!-- Quick info card -->
-        <div class="flex flex-col gap-4">
-          <div class="bg-section-light rounded-xl p-6 border border-black/5">
-            <h3 class="font-bold text-charcoal mb-4">Quick Reference</h3>
-            <div class="flex flex-col gap-3 text-sm">
-              {[
-                ['24" TV', '$24.00'],
-                ['28" TV', '$28.00'],
-                ['32" TV', '$32.00'],
-                ['36" TV', '$36.00'],
-                ['43" TV', '$43.00'],
-                ['46" TV', '$46.00'],
-                ['48" TV', '$48.00'],
-                ['50" TV', '$50.00'],
-                ['55" TV', '$55.00'],
-                ['65" TV', '$65.00'],
-                ['70" TV', '$70.00'],
-                ['75" TV', '$75.00'],
-                ['80" TV', '$80.00'],
-              ].map(([size, fee]) => (
-                <div class="flex items-center justify-between border-b border-black/5 pb-3 last:border-0 last:pb-0">
-                  <span class="text-charcoal/70">{size}</span>
-                  <span class="font-semibold text-charcoal">{fee}</span>
-                </div>
-              ))}
-            </div>
-            <p class="text-xs text-charcoal/45 mt-4">Select your size in the calculator to pay online.</p>
+          <!-- Cash only callout -->
+          <div class="mt-6 bg-brand-green/10 border border-brand-green/25 rounded-xl p-5 text-sm">
+            <p class="font-semibold text-charcoal mb-1">Cash only — collected at drop-off</p>
+            <p class="text-charcoal/65">
+              We accept cash payment when you arrive. No need to pay in advance —
+              just know your TV's screen size and bring the right amount.
+              Not sure of the size? Check the sticker on the back of your TV or look up the model number.
+            </p>
           </div>
 
-          <div class="bg-brand-green/10 border border-brand-green/25 rounded-xl p-5 text-sm text-charcoal/70">
+          <div class="mt-4 bg-section-light border border-black/5 rounded-xl p-5 text-sm text-charcoal/65">
             <p class="font-semibold text-charcoal mb-1">All types accepted</p>
             <p>Flat panel (LCD, LED, OLED, Plasma), CRT tube TVs, projector TVs, and monitors. All sizes.</p>
           </div>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Calculator + PayPal ───────────────────────────────── -->
-  <section class="bg-section-light py-14 md:py-18">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-
+        <!-- Pricing table -->
         <div>
-          <h2 class="text-2xl font-bold text-charcoal mb-3">Calculate & Pay Online</h2>
-          <p class="text-charcoal/65 text-sm leading-relaxed mb-6">
-            Enter your TV's diagonal screen size below. The fee will calculate automatically
-            and a PayPal button will appear so you can pay right here.
-            After paying, just bring your PayPal confirmation email when you drop off
-            (or mention it when scheduling a pickup).
-          </p>
-          <div class="flex flex-col gap-3 text-sm text-charcoal/65">
-            <div class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-brand-green shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-              </svg>
-              <span>Secure payment processed by Stripe</span>
+          <div class="bg-section-light rounded-xl p-6 border border-black/5">
+            <h3 class="font-bold text-charcoal mb-1">Pricing Reference</h3>
+            <p class="text-xs text-charcoal/45 mb-4">$1.00 per diagonal inch of screen size</p>
+            <div class="flex flex-col gap-3 text-sm">
+              {[
+                ['24"', '$24'],
+                ['28"', '$28'],
+                ['32"', '$32'],
+                ['36"', '$36'],
+                ['43"', '$43'],
+                ['46"', '$46'],
+                ['48"', '$48'],
+                ['50"', '$50'],
+                ['55"', '$55'],
+                ['65"', '$65'],
+                ['70"', '$70'],
+                ['75"', '$75'],
+                ['80"', '$80'],
+              ].map(([size, fee]) => (
+                <div class="flex items-center justify-between border-b border-black/5 pb-3 last:border-0 last:pb-0">
+                  <span class="text-charcoal/70">{size} TV</span>
+                  <span class="font-semibold text-charcoal">{fee}</span>
+                </div>
+              ))}
             </div>
-            <div class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-brand-green shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-              </svg>
-              <span>Pay with any credit or debit card — no account needed</span>
-            </div>
-            <div class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-brand-green shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-              </svg>
-              <span>Prefer to pay in person? Call us to arrange</span>
-            </div>
+            <p class="text-xs text-charcoal/40 mt-4 pt-3 border-t border-black/5">
+              Don't see your size? The math is simple — just multiply your screen's diagonal inches by $1.
+            </p>
           </div>
         </div>
 
-        <TVCalculator />
-
       </div>
     </div>
   </section>
 
-  <!-- ── After you pay ─────────────────────────────────────── -->
+  <!-- ── How it works ───────────────────────────────────── -->
   <section class="bg-charcoal text-white py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-xl font-bold mb-6">After You Pay</h2>
+      <h2 class="text-xl font-bold mb-6">How It Works</h2>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div class="flex gap-3">
           <div class="w-8 h-8 rounded-full bg-brand-green/20 flex items-center justify-center shrink-0">
             <span class="text-brand-green font-bold text-sm">1</span>
           </div>
           <div>
-            <p class="font-semibold text-sm mb-1">Save your confirmation</p>
-            <p class="text-white/60 text-sm">PayPal will email you a receipt. Save it — we'll ask to see it.</p>
+            <p class="font-semibold text-sm mb-1">Check your TV's size</p>
+            <p class="text-white/60 text-sm">Look at the sticker on the back or look up the model. The diagonal inch measurement is the screen size.</p>
           </div>
         </div>
         <div class="flex gap-3">
@@ -140,8 +111,8 @@ import TVCalculator from '../components/TVCalculator.astro';
             <span class="text-brand-green font-bold text-sm">2</span>
           </div>
           <div>
-            <p class="font-semibold text-sm mb-1">Drop off or schedule pickup</p>
-            <p class="text-white/60 text-sm">Bring the TV to us, or call to arrange a free pickup (12+ items minimum).</p>
+            <p class="font-semibold text-sm mb-1">Bring cash & drop off</p>
+            <p class="text-white/60 text-sm">Head to our facility on Gottschalk Pkwy. No appointment needed. Pay $1 per inch in cash when you arrive.</p>
           </div>
         </div>
         <div class="flex gap-3">
@@ -150,7 +121,7 @@ import TVCalculator from '../components/TVCalculator.astro';
           </div>
           <div>
             <p class="font-semibold text-sm mb-1">We handle the rest</p>
-            <p class="text-white/60 text-sm">Your TV gets properly processed — no landfill, no shortcuts.</p>
+            <p class="text-white/60 text-sm">Your TV gets properly processed — no landfill, no shortcuts, no hazardous materials going to waste.</p>
           </div>
         </div>
       </div>
